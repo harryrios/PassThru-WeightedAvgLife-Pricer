@@ -13,7 +13,7 @@ This file contains the main function
 """
 
 from InputManager import getInput, getBaseParameters, getTreasuryMatrix
-from working_on_PSA import PSA
+from PSA import PSA
 
 def main():
     # Call to getInput to init inputs
