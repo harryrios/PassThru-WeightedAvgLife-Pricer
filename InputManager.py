@@ -25,28 +25,40 @@ def getBaseParameters(filename):
     # lst(str) -> [WAC, CPN, WAM, WALA, OLS, pPSA,
     #               bPSA, price, back_spread]
     
-    # If the correct number of inputs are not 
-    # counted, 0 is returned.
-    
     inFile = open(filename, 'r')
-    input_arr = read(inFile).split(',')
+    input_arr = inFile.read().split(',')
     inFile.close()
-    
-    if (len(input_arr) != 9):
-        return 0
+
     return input_arr
     
-#def getTreasuryMatrix(filename):
+def getTreasuryMatrix(filename):
+    # This fucntion returns a tuple containing
+    # the treasury data, including a start date
+    # for which there is no treasury rate.
     
+    # SD: lst(str) -> [month, year]
+    # TM: lst(str) -> [month, year, rate]
+    
+    TM_mat = []
+    inFile = open(filename, 'r')
+    isFirst = True
+    for line in inFile:
+        if isFirst:
+            SD = line.strip('\n').split(',')
+            isFirst = False
+        else:
+            TM_vect = line.strip('\n').split(',')
+            TM_mat.append(TM_vect)
+    inFile.close()
+    
+    return (SD, TM_mat)
 
 def getInput(BP_filename, TM_filename):
-    BP_arr = getBaseParameters(BP_filename)
-    #TM_mat = getTreasuryMatrix(TM_filename)
-    
-    if (BP_arr != 0):
-        return (BP_arr, TM_mat)
-    else:
-        return 0
+    BP_arr = getBaseParameters(BP_filename) #Basic Parameters
+    tmp = getTreasuryMatrix(TM_filename)
+    TM_mat = tmp[1] #Treasury Data
+    SD = tmp[0] #Start Date
 
+    return (BP_arr, SD, TM_mat)
 
 
