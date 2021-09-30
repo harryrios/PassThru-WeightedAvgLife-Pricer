@@ -17,5 +17,18 @@ We use the price of a TBA (assumed to be 0 age) as an input as well.
 With the above inputs, maintaining constant spread to the curve on the front sequential we are able to derive prices for pools of age 0 to 30.  
 
 
+
+INPUT FILES : 
+BASE PARAMETERS -> must be a single line (txt or csv) of comma-seperated (NO SPACES!) values in the following order: WAC, CPN, WAM, WALA, OLS, pPSA, bPSA, price, back_spread.
+
+TREASURY MATRIX -> (txt or csv), each line represents a different date. The first line is the "start date" and goes as follows: month, year. 
+                                                                        The remaining lines are treasury data points: month, year, treasury rate. 
+                                                                        
+                     Months can be any element of the following set: {jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec}
+                     Years must be 4 digit number... ie 20XX
+
+ 
+
+
  
 
