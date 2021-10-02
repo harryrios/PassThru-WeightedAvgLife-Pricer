@@ -2,10 +2,16 @@
 # """
 # Created on Fri Oct  1 18:22:16 2021
 
-# @author: bigwa
+# @author: Harry Rios
+
+# This file contains the following functions:
+# Yield to Price and Price to Yield
+# Yield to Price has multiple subfunctions are requires
+# the appropriete data plus a key to run the right subfunction
+
 # """
 
-def helper1(data_arr):
+def helper0(data_arr):
     # ALL Values are base
     
     Int = data_arr[0] # base Interest
@@ -30,7 +36,7 @@ def helper1(data_arr):
         
     return tdv / tbs
     
-def helper2(data_arr): 
+def helper1(data_arr): 
     # ALL VALUES ARE +300
     
     Princ = data_arr[0]
@@ -53,7 +59,7 @@ def helper2(data_arr):
     
     return sum_pres_val / (sum(Prpy)+sum(SPrinc))
     
-def helper3(data_arr):
+def helper2(data_arr):
     # ALL Values are base
     
     TPrinc = data_arr[0]
@@ -73,7 +79,7 @@ def helper3(data_arr):
     
     return tdv/tbs
 
-def helper4(data_arr):
+def helper3(data_arr):
     # ALL data are base
     
     Princ = data_arr[0]
@@ -114,45 +120,43 @@ def helper4(data_arr):
     front_price = fSUM / fPrinc[0]
     back_price = bSUM / bPrinc[0]
     
-    return (front_price, back_price)
-        
+    return (front_price, back_price)      
     
 def YieldToPrice(data_arr, key):
     if (key == 0):
         # formally: yield_to_price_BACK
-        return helper1(data_arr)
+        return helper0(data_arr)
     
     elif (key == 1):
         # formally: yield_to_price
-        return helper2(data_arr)
+        return helper1(data_arr)
     
     elif (key == 2):
         # formally:  yield_to_price_FRONT_TWO
-        return helper3(data_arr)
+        return helper2(data_arr)
         
     elif (key == 3):
         # formally: new_thing
-        return helper4(data_arr)
-        
-
-        
+        return helper3(data_arr)
+          
+def PriceToYield(data_arr): # im not sure how well this function works
     
-def PriceToYield:
-    return 0
-# def price_to_yield(self, tgt_price): 
-#     guess_yield = 1.9318
-#     guess_price = None
-#     diff = 100.0
-#     mod = 5.0
-#     while (diff < -.00001) or (diff > .00001):
-#         guess_price = self.yield_to_price_FRONT_TWO(guess_yield)
-#         diff = guess_price - tgt_price
-#         if (diff > -.00001) and (diff < .00001):
-#             pass
-#         elif (guess_price > tgt_price):
-#             guess_yield += mod
-#         else:
-#             guess_yield -= mod
-
-#         mod /= 2
-#     return guess_yield
+    data_for_YTP2 = data_arr[0]
+    tgt_price = data_arr[1]
+    guess_yield = data_arr[2] # should be 1.9318
+    
+    diff = 100
+    mod = 5.0
+    
+    while not ((diff > -0.001) and (diff < 0.001)):
+        guess_price = YieldToPrice(data_for_YTP2, 2)
+        diff = guess_price - tgt_price
+        
+        if (guess_price > tgt_price):
+            guess_yield += mod
+        else:
+            guess_yield -= mod
+            
+        mod /= 2
+    return guess_yield
+    
