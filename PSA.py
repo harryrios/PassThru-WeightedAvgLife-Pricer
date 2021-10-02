@@ -20,11 +20,13 @@ def PSA(BP_arr, PSA):
     pSPrinc = 0 # previous scheduled principal
     pScdBal = 0 # previous scheduled balance
     
-    PSA_mat = []
-    # ROWS : principal, interest, scheduled principal, prepayment, total principal
-    # COlS : months 1 thru 360
-    
     sumCPR = 0
+    
+    Princ_arr = []
+    Int_arr = [] 
+    SPrinc_arr = []
+    Prpy_arr = []
+    TPrinc_arr = []
     
     while (i<WAM):
         top = 1 - (1 + (WAC / 1200)) ** (-1 * (WAM - i-1))
@@ -50,7 +52,11 @@ def PSA(BP_arr, PSA):
         except:
             pass
         
-        PSA_mat.append([cPrinc, cInt, cSPrinc, cPrpy, cTPrinc])
+        Princ_arr.append(cPrinc)
+        Int_arr.append(cInt)
+        SPrinc_arr.append(cSPrinc)
+        Prpy_arr.append(cPrpy)
+        TPrinc_arr.append(cTPrinc)
         
         pPrinc  = cPrinc
         pPrpy = cPrpy
@@ -58,5 +64,53 @@ def PSA(BP_arr, PSA):
         pScdBal = ScdBal
         i+=1
             
+    PSA_mat = [Princ_arr, Int_arr, SPrinc_arr, Prpy_arr, TPrinc_arr]
     return PSA_mat
 
+# OUTPUTS -> PSA_MATRIX
+    # ROWS : principal, interest, scheduled principal, prepayment, total principal
+    # COlS : months 1 thru 360
+
+def WAL_months(sched_princ_arr, prepay_arr, princ_arr, WAM):
+    sumprod_SchedPrinc = 0
+    sumprod_Prepay = 0
+    
+    for i in range(WAM):
+        sumprod_SchedPrinc += (i+1)*sched_princ_arr[i] 
+        sumprod_Prepay += (i+1)*prepay_arr[i]
+        
+    WAL_months = []
+    
+    for i in range(WAM):
+        WM = (sumprod_SchedPrinc+sumprod_Prepay)/princ_arr[i] - (i+1)
+        WAL_months.append(WM)
+        sumprod_SchedPrinc -= (i+1)*sched_princ_arr[i] 
+        sumprod_Prepay -= (i+1)*prepay_arr[i]
+        
+    return WAL_months
+    
+def cutting():
+    
+    
+    
+    # def step_one(self):
+    #     curr_size = 0
+    #     dividend = 0
+    #     avg_life = 0
+    #     i = 0
+        
+    #     while (avg_life < 6.99) and (i+self.SM < len(self.pTLPR)):
+    #         curr_month = i + self.SM
+    #         curr_size += self.pTLPR[curr_month-1]
+    #         dividend += self.pTLPR[curr_month-1] * (i+1)
+    #         avg_life = ((dividend / curr_size)) / 12
+    #       #  print(curr_month, self.pSCPR[curr_month-1]+self.pTLPR[curr_month-1])
+    #         i+=1
+            
+    #     # ---- output ---- #
+    #     cut_percent = (curr_size- self.pTLPR[curr_month]) / self.pPRNC[self.SM-1]
+    #     #print('CP ', cut_percent)
+    #     cut_ind = i + self.SM - 2
+        
+    #     return (cut_percent, cut_ind)
+    
