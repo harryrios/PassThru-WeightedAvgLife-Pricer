@@ -1,11 +1,10 @@
 def PSA(BP_arr, PSA):
     # BP_arr -> lst(str)
     #   [WAC, CPN, WAM, WALA, OLS, pPSA, bPSA, price, back_spread]
-    # PSA -> float, can be +300 or BASE
-    
-    OLS = float(BP_arr[4])
+    # PSA -> float, can be +300 or BASE    OLS = float(BP_arr[4])
     WAC = float(BP_arr[0])
     WAM = float(BP_arr[2]) 
+    OLS = float(BP_arr[4])
     
     i = 0 # current month
     
@@ -71,46 +70,77 @@ def PSA(BP_arr, PSA):
     # ROWS : principal, interest, scheduled principal, prepayment, total principal
     # COlS : months 1 thru 360
 
-def WAL_months(sched_princ_arr, prepay_arr, princ_arr, WAM):
-    sumprod_SchedPrinc = 0
-    sumprod_Prepay = 0
+def WAL_months(SPrinc_arr, Prpy_arr, Princ_arr, WAM, start):
+    # ALL cashflows are +300
     
-    for i in range(WAM):
-        sumprod_SchedPrinc += (i+1)*sched_princ_arr[i] 
-        sumprod_Prepay += (i+1)*prepay_arr[i]
+    sumprod_SPrinc = 0
+    sumprod_Prpy = 0
+    i = start
+    
+    while i in range(WAM):
+        sumprod_SPrinc += (i+1)*SPrinc_arr[i] 
+        sumprod_Prpy += (i+1)*Prpy_arr[i]
+        i += 1
         
     WAL_months = []
+    i = start
     
-    for i in range(WAM):
-        WM = (sumprod_SchedPrinc+sumprod_Prepay)/princ_arr[i] - (i+1)
+    while i in range(WAM):
+        WM = (sumprod_SPrinc+sumprod_Prpy)/Princ_arr[i] - (i+1)
         WAL_months.append(WM)
-        sumprod_SchedPrinc -= (i+1)*sched_princ_arr[i] 
-        sumprod_Prepay -= (i+1)*prepay_arr[i]
+        sumprod_SPrinc -= (i+1)*SPrinc_arr[i] 
+        sumprod_Prpy -= (i+1)*Prpy_arr[i]
+        i += 1
         
     return WAL_months
     
-def cutting():
+def cutting(TPrinc_arr, SPrinc_arr, Princ_init, WAM, start): # double check this works with appropreite data
+    # ALL cashflows are +300
     
+    curr_size = 0
+    dividend = 0
+    avg_life = 0
+    i = start
     
+    while (avg_life < 6.99) and (i < int(WAM)):
+        curr_size += TPrinc_arr[i]
+        dividend += TPrinc_arr[i] * (i+1)
+        avg_life = (dividend/curr_size)/12
+        i+=1
+    i -= 1
+    cut_percent = (curr_size - TPrinc_arr[i])/Princ_init
+    return (cut_percent, i)
     
-    # def step_one(self):
-    #     curr_size = 0
-    #     dividend = 0
-    #     avg_life = 0
-    #     i = 0
-        
-    #     while (avg_life < 6.99) and (i+self.SM < len(self.pTLPR)):
-    #         curr_month = i + self.SM
-    #         curr_size += self.pTLPR[curr_month-1]
-    #         dividend += self.pTLPR[curr_month-1] * (i+1)
-    #         avg_life = ((dividend / curr_size)) / 12
-    #       #  print(curr_month, self.pSCPR[curr_month-1]+self.pTLPR[curr_month-1])
-    #         i+=1
-            
-    #     # ---- output ---- #
-    #     cut_percent = (curr_size- self.pTLPR[curr_month]) / self.pPRNC[self.SM-1]
-    #     #print('CP ', cut_percent)
-    #     cut_ind = i + self.SM - 2
-        
-    #     return (cut_percent, cut_ind)
+def front_and_back_WAL(TPrinc_arr, Princ_arr, WAM, cut_percent, start):
+    # ALL cashflows are BASE
+    
+    sumprod = 0
+    div = 0
+    i = start
+    
+    while (div/Princ_arr[i]) <= cut_percent:
+        sumprod += (i+1) * TPrinc_arr[i]
+        div += TPrinc_arr[i]
+        i += 1
+    i -= 1
+    cut_ind = i
+    
+    sumprod -= (i+1) * TPrinc_arr[i]
+    div -= TPrinc_arr[i]
+    front_WAL = (sumprod / div) / 12
+    
+    sumprod = 0
+    div = 0
+    
+    while i in range(WAM):
+        sumprod += (i+1) * TPrinc_arr[i]
+        div += TPrinc_arr[i]
+        i+=1
+    i-=1
+    sumprod -= (i+1) * TPrinc_arr[i]
+    div -= TPrinc_arr[i]
+    back_WAL = (sumprod / div) / 12
+    
+    return (front_WAL, back_WAL, cut_ind)
+    
     
