@@ -44,18 +44,19 @@ def helper1(data_arr):
     SPrinc = data_arr[2]
     Int = data_arr[3]
     Yld = data_arr[4]
+    i = data_arr[5] # start month
     
     monthly_disc = 1 + (Yld/1200)
     sum_pres_val = 0
     
-    for i in range(WAM):
+    while i in range(WAM):
         cashflow_sum = SPrinc[i] + Prpy[i] + Int[i]
-        
         if (i==0):
             prev = 1/monthly_disc
         else:
             prev = prev/monthly_disc
         sum_pres_val += prev*cashflow_sum
+        i+=1
     
     return sum_pres_val / (sum(Prpy)+sum(SPrinc))
     
@@ -66,16 +67,18 @@ def helper2(data_arr):
     Int = data_arr[1]
     guess_yield = data_arr[2]
     CI = data_arr[3]
+    i = data_arr[4] # start_month
     
     tdv = 0
     tbs = 0
     multiplier = 1 + guess+_yield/1200
     disc = multiplier
     
-    for i in range(CI):
+    while i in range(CI):
         tdv += (TPrinc[i]+Int[i])/disc
         tbs += TPrinc[i]
         disc *= multiplier
+        i += 1
     
     return tdv/tbs
 
@@ -89,6 +92,7 @@ def helper3(data_arr):
     CPN = data_arr[4]
     front_yield = data_arr[5]
     back_yield = data_arr[6]
+    i = data_arr[7] # start month
     
     fPrinc = [] # front princ
     fInt = [] # front int
@@ -97,7 +101,7 @@ def helper3(data_arr):
     bInt = [] # back int
     bSUM = 0 # back sum
     
-    for i in range(WAM):
+    while i in range(WAM):
         
         if (i==0):
             fPrinc.append(cut_percent*Princ[i])
@@ -116,6 +120,8 @@ def helper3(data_arr):
             
             fSUM += (fInt[i] + fPrinc[i-1] - fPrinc[i]) / L
             bSUM += (bInt[i] + bPrinc[i-1] - bPrinc[i]) / M
+            
+        i += 1
             
     front_price = fSUM / fPrinc[0]
     back_price = bSUM / bPrinc[0]
@@ -139,12 +145,8 @@ def YieldToPrice(data_arr, key):
         # formally: new_thing
         return helper3(data_arr)
           
-def PriceToYield(data_arr): # im not sure how well this function works
-    
-    data_for_YTP2 = data_arr[0]
-    tgt_price = data_arr[1]
-    guess_yield = data_arr[2] # should be 1.9318
-    
+def PriceToYield(data_for_YTP2, tgt_price, guess_yield): # im not sure how well this function works
+                                            # should be 1.9318
     diff = 100
     mod = 5.0
     
