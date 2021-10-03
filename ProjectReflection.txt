@@ -1,0 +1,12 @@
+This project consolidated multiple excel-file resources in order to synthesize a working algorithm. 
+Due to the challenge of having to understand the excel, tranpose the algorithm into Python, and then
+structure the many subfunctions such that the entire program worked as a whole, planning for efficiency 
+was difficult. However no element of this program is too time-costly, and it runs in reasonable time. 
+Correctness was also difficult to check for. In retrospect, if I had access to Bloomberg, I could have 
+created a set of test examples and an algorithm that could run my program and test it against the test-data.
+However, this evaluation could also be biased, as we might have overfit our model for that data. Lastly,
+testing against the excel-file data was not a valueable tool for assessing correctness because of the inconsistant
+parameters and different data-sets. Thus, it was only possible to construct the algorithm with those resources,
+but not to test it. 
+
+- Harry Rios
