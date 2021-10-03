@@ -1,13 +1,13 @@
-# # -*- coding: utf-8 -*-
-# """
-# Created on Fri Oct  1 18:22:16 2021
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Oct  1 18:22:16 2021
 
-# @author: Harry Rios
+@author: Harry Rios
 
-# This file contains the following functions:
-# Yield to Price and Price to Yield
-# Yield to Price has multiple subfunctions are requires
-# the appropriete data plus a key to run the right subfunction
+This file contains the following functions:
+Yield to Price,Price to Yield,front_and_back_price
+Yield to Price has multiple subfunctions are requires
+the appropriete data plus a key to run the right subfunction
 
 # """
 
@@ -65,9 +65,9 @@ def helper2(data_arr):
     
     TPrinc = data_arr[0]
     Int = data_arr[1]
-    guess_yield = data_arr[2]
-    CI = data_arr[3]
-    i = data_arr[4] # start_month
+    CI = data_arr[2]
+    i = data_arr[3] # start_month
+    guess_yield = data_arr[4]
     
     tdv = 0
     tbs = 0
@@ -149,16 +149,61 @@ def PriceToYield(data_for_YTP2, tgt_price, guess_yield): # im not sure how well 
                                             # should be 1.9318
     diff = 100
     mod = 5.0
+    curr_data = data_for_YTP2.append(guess_yield)
     
     while not ((diff > -0.001) and (diff < 0.001)):
+        
         guess_price = YieldToPrice(data_for_YTP2, 2)
         diff = guess_price - tgt_price
-        
         if (guess_price > tgt_price):
             guess_yield += mod
         else:
             guess_yield -= mod
-            
         mod /= 2
+        curr_data[4] = guess_yield
+        
     return guess_yield
     
+def front_and_back_price(start_month, WAM, CPN, plus300_cut_percent,
+                         front_yield, back_yield, Princ, TPrinc):
+    # ALL cashflows should be BASE
+    
+    front_Princ = []
+    back_Princ = []
+    front_Int = []
+    back_Int = []
+    front_TDS = []
+    back_TDS = []
+    front_sum = 0
+    back_sum = 0
+    
+    i = start_month
+    j = 0
+    
+    while i in range(WAM):
+        if (i == start_month):
+            front_Princ.append(plus300_cut_percent * Princ[i])
+            back_Princ.append((1-plus300_cut_percent) * Princ[i])
+            curr_FI = (CPN/1200) * front_Princ[j] # front interest
+            curr_BI = (CPN/1200) * back_Princ[j] # back interest
+        else:
+            prev_FP = front_Princ[j-1] # front princ
+            prev_BP = back_Princ[j-1] # back princ
+            curr_FP = max(prev_FP - TPrinc[i], 0)
+            front_Princ.append(curr_FP)
+            curr_BP = (prev_BP - TPrinc[i] + prev_FP - curr_FP)
+            curr_FI = (CPN/1200) * front_Princ[j] # front interest
+            curr_BI = (CPN/1200) * back_Princ[j] # back interest
+            L = (1+(front_yield/1200)) ** (j+1)
+            M = (1+(back_yield/1200)) ** (j+1)
+            front_sum += (curr_FI+prev_FP-curr_FP)/L
+            back_sum += (curr_BI+prev_BP-curr_BP)/M
+        front_Int.append(curr_FI)
+        back_Int.append(curr_BI)            
+        i += 1
+        j += 1
+        
+    front_price = front_sum / front_Princ[0]
+    back_price = back_sum / back_Princ[0]
+
+    return (front_price, back_price)
