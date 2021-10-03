@@ -39,7 +39,7 @@ def getTreasuryMatrix(filename):
     # SD: lst(str) -> [month, year]
     # TM: lst(str) -> [month, year, rate]
     
-    TM_mat = []
+    TRSY_mat = []
     inFile = open(filename, 'r')
     isFirst = True
     for line in inFile:
@@ -47,18 +47,18 @@ def getTreasuryMatrix(filename):
             SD = line.strip('\n').split(',')
             isFirst = False
         else:
-            TM_vect = line.strip('\n').split(',')
-            TM_mat.append(TM_vect)
+            TRSY_vect = line.strip('\n').split(',')
+            TRSY_mat.append(TRSY_vect)
     inFile.close()
     
-    return (SD, TM_mat)
+    return (SD, TRSY_mat)
 
 def getInput(BP_filename, TM_filename):
     BP_arr = getBaseParameters(BP_filename) #Basic Parameters
     tmp = getTreasuryMatrix(TM_filename)
-    TM_mat = tmp[1] #Treasury Data
+    TRSY_mat = tmp[1] #Treasury Data
     SD = tmp[0] #Start Date
 
-    return (BP_arr, SD, TM_mat)
+    return (BP_arr, SD, TRSY_mat)
 
 
