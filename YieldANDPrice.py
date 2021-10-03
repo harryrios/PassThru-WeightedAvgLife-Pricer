@@ -29,7 +29,7 @@ def helper0(data_arr):
         tdv += TPrinc[CI]/disc
         disc *= 1+(BY/1200)
     while CI in range(WAM):
-        tdv += (TPrinc[CI]+bInt[CI])/disc
+        tdv += (TPrinc[CI]+Int[CI])/disc
         tbs += TPrinc[CI]
         CI += 1
         disc *= 1+(BY/1200)
@@ -71,7 +71,7 @@ def helper2(data_arr):
     
     tdv = 0
     tbs = 0
-    multiplier = 1 + guess+_yield/1200
+    multiplier = 1 + guess_yield/1200
     disc = multiplier
     
     while i in range(CI):
@@ -79,7 +79,6 @@ def helper2(data_arr):
         tbs += TPrinc[i]
         disc *= multiplier
         i += 1
-    
     return tdv/tbs
 
 def helper3(data_arr):
@@ -93,6 +92,8 @@ def helper3(data_arr):
     front_yield = data_arr[5]
     back_yield = data_arr[6]
     i = data_arr[7] # start month
+    j = 0
+    
     
     fPrinc = [] # front princ
     fInt = [] # front int
@@ -102,26 +103,26 @@ def helper3(data_arr):
     bSUM = 0 # back sum
     
     while i in range(WAM):
-        
-        if (i==0):
+        if (j==0):
             fPrinc.append(cut_percent*Princ[i])
             bPrinc.append((1-cut_percent)*Princ[i])
         else:
-            curr_fPrinc = max(fPrinc[i-1] - TPrinc[i], 0)
+            curr_fPrinc = max(fPrinc[j-1] - TPrinc[i], 0)
             fPrinc.append(curr_fPrinc)
-            bPrinc.append(bPrinc[i-1] - TPrinc[i] + fPrinc[i-1] - curr_fPrinc)
-            
-        fInt.append((CPN/1200) * fPrinc[i])
-        bInt.append((CPN/1200) * bPrinc[i])
+            bPrinc.append(bPrinc[j-1] - TPrinc[i] + fPrinc[j-1] - curr_fPrinc)
+
+        fInt.append((CPN/1200) * fPrinc[j])
+        bInt.append((CPN/1200) * bPrinc[j])
         
-        if (i!=0):
-            L = (1+(front_yield/1200))**(i)
-            M = (1+(back_yield/1200))**(i)
+        if (j!=0):
+            L = (1+(front_yield/1200))**(j)
+            M = (1+(back_yield/1200))**(j)
             
-            fSUM += (fInt[i] + fPrinc[i-1] - fPrinc[i]) / L
-            bSUM += (bInt[i] + bPrinc[i-1] - bPrinc[i]) / M
+            fSUM += (fInt[j] + fPrinc[j-1] - fPrinc[j]) / L
+            bSUM += (bInt[j] + bPrinc[j-1] - bPrinc[j]) / M
             
         i += 1
+        j += 1
             
     front_price = fSUM / fPrinc[0]
     back_price = bSUM / bPrinc[0]
@@ -148,22 +149,21 @@ def YieldToPrice(data_arr, key):
 def PriceToYield(data_for_YTP2, tgt_price, guess_yield): # im not sure how well this function works
                                             # should be 1.9318
     diff = 100
-    mod = 5.0
+    mod = 7.5
+    new_data = data_for_YTP2
+    new_data.append(guess_yield)
     curr_data = data_for_YTP2.append(guess_yield)
-    
-    while not ((diff > -0.001) and (diff < 0.001)):
-        
-        guess_price = YieldToPrice(data_for_YTP2, 2)
-        diff = guess_price - tgt_price
+    for i in range(15):
+        guess_price = YieldToPrice(new_data, 2)
         if (guess_price > tgt_price):
             guess_yield += mod
         else:
             guess_yield -= mod
         mod /= 2
-        curr_data[4] = guess_yield
+        new_data[4] = guess_yield
         
     return guess_yield
-    
+       
 def front_and_back_price(start_month, WAM, CPN, plus300_cut_percent,
                          front_yield, back_yield, Princ, TPrinc):
     # ALL cashflows should be BASE
@@ -172,8 +172,6 @@ def front_and_back_price(start_month, WAM, CPN, plus300_cut_percent,
     back_Princ = []
     front_Int = []
     back_Int = []
-    front_TDS = []
-    back_TDS = []
     front_sum = 0
     back_sum = 0
     
