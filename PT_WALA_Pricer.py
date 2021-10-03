@@ -74,7 +74,7 @@ def zero_to_thirty(BP_arr, start_arr, TRSY_mat):
         back_WAL = tmp[1]
         base_cut_ind = tmp[2]    
             
-        #  #### if/else part #####
+        #### if/else part (depending on front spread) #####
         if (start_month == 0):
             tmp = front_spread_calc([float(BP_arr[8]), back_WAL,front_WAL, plus300_cut_ind, int(BP_arr[2]),
                               float(BP_arr[7]), base_cut_ind, start_month,base_cashflows, start_arr, TRSY_mat])
@@ -101,7 +101,6 @@ def main():
     
     BP_arr = tmp[0] # Base Parameters -> lst(str)
     #[WAC, CPN, WAM, WALA, OLS, pPSA, bPSA, price, back_spread]
-    #[  0,   1,   2,    3,   4,    5,    6,     7,       8]
     
     start_arr = tmp[1] # Start Date -> lst(str)
     TRSY_mat = tmp[2] # Treasury Data -> lst(lst(str))
