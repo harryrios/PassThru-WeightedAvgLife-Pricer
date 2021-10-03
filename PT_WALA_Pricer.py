@@ -13,7 +13,7 @@ This file contains the main function
 from InputManager import getInput, getBaseParameters, getTreasuryMatrix
 from PSA import PSA, WAL_months, cutting, front_and_back_WAL
 from YieldPlotter import yield_plotter, numerate_month, month_diff
-from Yield_To_Price import helper0,helper1,helper2,helper3,YieldToPrice,PriceToYield,front_and_back_price
+from YieldANDPrice import helper0,helper1,helper2,helper3,YieldToPrice,PriceToYield,front_and_back_price
 from OutputManager import outputResults
 
 def front_spread_calc(data_arr):
