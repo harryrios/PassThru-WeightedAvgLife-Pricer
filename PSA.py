@@ -143,4 +143,4 @@ def front_and_back_WAL(TPrinc_arr, Princ_arr, WAM, cut_percent, start):
     
     return (front_WAL, back_WAL, cut_ind)
     
-    
+        
